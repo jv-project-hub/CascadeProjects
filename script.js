@@ -43,7 +43,10 @@ const statusEl = document.getElementById("status");
 const startBtn = document.getElementById("start-btn");
 const orientationBtn = document.getElementById("orientation-btn");
 const toggleFleetBtn = document.getElementById("toggle-fleet-btn");
-const difficultyEl = document.getElementById("difficulty");
+const difficultyBtn = document.getElementById("difficulty-btn");
+
+const DIFFICULTY_LEVELS = ["easy", "medium", "hard"];
+const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" };
 
 const playerShipsLeftEl = document.getElementById("player-ships-left");
 const aiShipsLeftEl = document.getElementById("ai-ships-left");
@@ -295,12 +298,12 @@ function startGame() {
     return;
   }
 
-  const aiCells = aiBoardEl.querySelectorAll(".cell");
-  aiCells.forEach((cell) => cell.classList.remove("disabled"));
+    const aiCells = aiBoardEl.querySelectorAll(".cell");
+    aiCells.forEach((cell) => cell.classList.remove("disabled"));
 
-  if (difficultyEl) {
-    difficultyEl.disabled = true;
-  }
+    if (difficultyBtn) {
+      difficultyBtn.disabled = true;
+    }
 
   gameOver = false;
   playerTurn = true;
@@ -327,10 +330,10 @@ function initGame() {
   orientationBtn.disabled = false;
   startBtn.textContent = "Start Game";
 
-  if (difficultyEl) {
-    difficulty = difficultyEl.value;
-    difficultyEl.disabled = false;
-  }
+    if (difficultyBtn) {
+      difficultyBtn.disabled = false;
+      difficultyBtn.textContent = "Difficulty: " + DIFFICULTY_LABELS[difficulty];
+    }
 
   playerBoard = createEmptyBoard();
   aiBoard = createEmptyBoard();
@@ -743,9 +746,12 @@ if (soundBtn) {
   soundBtn.addEventListener("click", toggleSound);
 }
 
-if (difficultyEl) {
-  difficultyEl.addEventListener("change", () => {
-    difficulty = difficultyEl.value;
+if (difficultyBtn) {
+  difficultyBtn.addEventListener("click", () => {
+    const currentIndex = DIFFICULTY_LEVELS.indexOf(difficulty);
+    const nextIndex = (currentIndex + 1) % DIFFICULTY_LEVELS.length;
+    difficulty = DIFFICULTY_LEVELS[nextIndex];
+    difficultyBtn.textContent = "Difficulty: " + DIFFICULTY_LABELS[difficulty];
   });
 }
 

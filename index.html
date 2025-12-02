@@ -15,19 +15,11 @@
       <button id="start-btn">Start Game</button>
       <div class="game-options">
         <span class="game-options-label">Game Options</span>
-        <button id="orientation-btn">Orientation: Horizontal</button>
-        <button id="toggle-fleet-btn">Hide Fleets</button>
-        <button id="sound-btn">Sound: ON</button>
-        <div class="difficulty-selector">
-          <label for="difficulty">Difficulty:</label>
-          <select id="difficulty">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
+        <button id="orientation-btn" class="game-option-btn">Orientation: Horizontal</button>
+        <button id="toggle-fleet-btn" class="game-option-btn">Hide Fleets</button>
+        <button id="sound-btn" class="game-option-btn">Sound: ON</button>
+        <button id="difficulty-btn" class="game-option-btn">Difficulty: Medium</button>
       </div>
-      <span id="status">Place your ships by clicking on your board.</span>
     </div>
 
     <div class="stats">
@@ -128,6 +120,10 @@
       <span class="cell legend ship"></span> Your Ship
       <span class="cell legend hit"></span> Hit
       <span class="cell legend miss"></span> Miss
+    </div>
+
+    <div class="status-container">
+      <span id="status">Place your ships by clicking on your board.</span>
     </div>
   </div>
 
