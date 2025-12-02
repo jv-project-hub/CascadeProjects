@@ -16,6 +16,7 @@ const statusEl = document.getElementById("status");
 const startBtn = document.getElementById("start-btn");
 const orientationBtn = document.getElementById("orientation-btn");
 const toggleFleetBtn = document.getElementById("toggle-fleet-btn");
+const difficultyEl = document.getElementById("difficulty");
 
 const playerShipsLeftEl = document.getElementById("player-ships-left");
 const aiShipsLeftEl = document.getElementById("ai-ships-left");
@@ -37,6 +38,14 @@ let playerShots = 0;
 let aiShots = 0;
 
 let fleetsVisible = true;
+
+// difficulty setting
+let difficulty = "medium";
+
+// hunt mode state for hard difficulty AI
+let aiHuntMode = false;
+let aiHuntTargets = [];
+let aiLastHit = null;
 
 // manual placement state
 let placingIndex = 0;
@@ -193,6 +202,9 @@ function resetAIShots() {
     }
   }
   shuffle(aiAvailableShots);
+  aiHuntMode = false;
+  aiHuntTargets = [];
+  aiLastHit = null;
 }
 
 function shuffle(array) {
@@ -259,6 +271,10 @@ function startGame() {
   const aiCells = aiBoardEl.querySelectorAll(".cell");
   aiCells.forEach((cell) => cell.classList.remove("disabled"));
 
+  if (difficultyEl) {
+    difficultyEl.disabled = true;
+  }
+
   gameOver = false;
   playerTurn = true;
   statusEl.textContent = "Your turn: fire on Enemy Waters.";
@@ -277,6 +293,11 @@ function initGame() {
   orientationBtn.textContent = "Orientation: Horizontal";
   orientationBtn.disabled = false;
   startBtn.textContent = "Start Game";
+
+  if (difficultyEl) {
+    difficulty = difficultyEl.value;
+    difficultyEl.disabled = false;
+  }
 
   playerBoard = createEmptyBoard();
   aiBoard = createEmptyBoard();
@@ -465,29 +486,105 @@ function onPlayerFire(e) {
   setTimeout(aiFire, 500);
 }
 
+function getAdjacentCells(r, c) {
+  const adjacent = [];
+  const directions = [
+    { dr: -1, dc: 0 },
+    { dr: 1, dc: 0 },
+    { dr: 0, dc: -1 },
+    { dr: 0, dc: 1 },
+  ];
+  for (const { dr, dc } of directions) {
+    const nr = r + dr;
+    const nc = c + dc;
+    if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE) {
+      adjacent.push({ r: nr, c: nc });
+    }
+  }
+  return adjacent;
+}
+
+function removeFromAvailableShots(r, c) {
+  const index = aiAvailableShots.findIndex(
+    (shot) => shot.r === r && shot.c === c
+  );
+  if (index !== -1) {
+    aiAvailableShots.splice(index, 1);
+  }
+}
+
 function aiFire() {
   if (gameOver) return;
 
-  // Use iterative approach instead of recursion to find a valid shot
-  // This avoids potential stack overflow if data model changes in the future
   let r, c, tile;
-  while (true) {
-    if (aiAvailableShots.length === 0) {
-      gameOver = true;
-      statusEl.textContent = "Draw! No more positions to fire.";
-      startBtn.textContent = "Restart";
-      return;
+
+  if (difficulty === "easy") {
+    while (true) {
+      if (aiAvailableShots.length === 0) {
+        gameOver = true;
+        statusEl.textContent = "Draw! No more positions to fire.";
+        startBtn.textContent = "Restart";
+        return;
+      }
+      const shot = aiAvailableShots.pop();
+      r = shot.r;
+      c = shot.c;
+      tile = playerBoard[r][c];
+      if (!tile.hit) {
+        break;
+      }
+    }
+  } else if (difficulty === "hard") {
+    if (aiHuntMode && aiHuntTargets.length > 0) {
+      let foundValidTarget = false;
+      while (aiHuntTargets.length > 0 && !foundValidTarget) {
+        const target = aiHuntTargets.shift();
+        r = target.r;
+        c = target.c;
+        tile = playerBoard[r][c];
+        if (!tile.hit) {
+          foundValidTarget = true;
+          removeFromAvailableShots(r, c);
+        }
+      }
+      if (!foundValidTarget) {
+        aiHuntMode = false;
+      }
     }
 
-    const shot = aiAvailableShots.pop();
-    r = shot.r;
-    c = shot.c;
-    tile = playerBoard[r][c];
-
-    if (!tile.hit) {
-      break; // Found a valid shot, exit the loop
+    if (!aiHuntMode || aiHuntTargets.length === 0) {
+      while (true) {
+        if (aiAvailableShots.length === 0) {
+          gameOver = true;
+          statusEl.textContent = "Draw! No more positions to fire.";
+          startBtn.textContent = "Restart";
+          return;
+        }
+        const shot = aiAvailableShots.pop();
+        r = shot.r;
+        c = shot.c;
+        tile = playerBoard[r][c];
+        if (!tile.hit) {
+          break;
+        }
+      }
     }
-    // Otherwise, continue to the next shot
+  } else {
+    while (true) {
+      if (aiAvailableShots.length === 0) {
+        gameOver = true;
+        statusEl.textContent = "Draw! No more positions to fire.";
+        startBtn.textContent = "Restart";
+        return;
+      }
+      const shot = aiAvailableShots.pop();
+      r = shot.r;
+      c = shot.c;
+      tile = playerBoard[r][c];
+      if (!tile.hit) {
+        break;
+      }
+    }
   }
 
   tile.hit = true;
@@ -508,6 +605,23 @@ function aiFire() {
         ship.sunk = true;
         statusEl.textContent = `The enemy sunk your ${ship.name}!`;
         sunkThisShot = true;
+        if (difficulty === "hard") {
+          aiHuntMode = false;
+          aiHuntTargets = [];
+        }
+      } else if (difficulty === "hard") {
+        aiHuntMode = true;
+        aiLastHit = { r, c };
+        const adjacent = getAdjacentCells(r, c);
+        for (const cell of adjacent) {
+          const adjTile = playerBoard[cell.r][cell.c];
+          if (
+            !adjTile.hit &&
+            !aiHuntTargets.some((t) => t.r === cell.r && t.c === cell.c)
+          ) {
+            aiHuntTargets.push(cell);
+          }
+        }
       }
     }
     playerCell.classList.remove("water", "ship");
@@ -550,6 +664,12 @@ if (toggleFleetBtn) {
   toggleFleetBtn.addEventListener("click", () => {
     fleetsVisible = !fleetsVisible;
     updateFleetVisibility();
+  });
+}
+
+if (difficultyEl) {
+  difficultyEl.addEventListener("change", () => {
+    difficulty = difficultyEl.value;
   });
 }
 
