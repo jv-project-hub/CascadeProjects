@@ -87,18 +87,20 @@ h1 {
 }
 
 .stats {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: auto auto;
+  row-gap: 4px;
+  column-gap: 24px;
   font-size: 0.9rem;
   text-align: center;
 }
 
 .fleets {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   margin: 4px 0 16px;
+  align-items: flex-start;
 }
 
 .fleets.hidden {
