@@ -271,6 +271,12 @@ function initGame() {
   horizontal = true;
   placementDone = false;
 
+  // Remove any existing player ship images from previous games
+  if (playerBoardWrapper) {
+    const oldImages = playerBoardWrapper.querySelectorAll(".ship-image");
+    oldImages.forEach((img) => img.remove());
+  }
+
   playerShips = [];
   aiShips = [];
 
