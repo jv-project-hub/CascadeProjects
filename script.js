@@ -605,11 +605,9 @@ function aiFire() {
         ship.sunk = true;
         statusEl.textContent = `The enemy sunk your ${ship.name}!`;
         sunkThisShot = true;
-        if (difficulty === "hard") {
-          aiHuntMode = false;
-          aiHuntTargets = [];
-        }
-      } else if (difficulty === "hard") {
+      }
+
+      if (difficulty === "hard") {
         aiHuntMode = true;
         aiLastHit = { r, c };
         const adjacent = getAdjacentCells(r, c);
