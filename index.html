@@ -9,7 +9,10 @@
 </head>
 <body>
   <div class="app">
-    <h1><img src="images/battleship-logo.webp" alt="Battleship" class="logo"></h1>
+    <h1 class="logo-wrapper">
+      <img src="images/battleship-logo.webp" alt="Battleship" class="logo">
+      <button type="button" class="logo-easter-egg" aria-label="Open secret video"></button>
+    </h1>
 
     <div class="controls">
       <button id="start-btn">Start Game</button>
@@ -123,6 +126,26 @@
 
     <div class="status-container">
       <span id="status">Place your ships by clicking on your board.</span>
+    </div>
+  </div>
+
+  <!-- Easter Egg Modal -->
+  <div id="easter-egg-modal" class="easter-egg-modal hidden">
+    <div class="easter-egg-backdrop"></div>
+    <div class="easter-egg-content">
+      <button type="button" class="easter-egg-close" aria-label="Close video">&times;</button>
+      <div class="easter-egg-video-wrapper">
+        <iframe
+          id="easter-egg-iframe"
+          width="560"
+          height="315"
+          src=""
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </div>
 

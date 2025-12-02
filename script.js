@@ -45,6 +45,41 @@ const orientationBtn = document.getElementById("orientation-btn");
 const toggleFleetBtn = document.getElementById("toggle-fleet-btn");
 const difficultyBtn = document.getElementById("difficulty-btn");
 
+// Easter Egg elements
+const logoEasterEggBtn = document.querySelector(".logo-easter-egg");
+const easterEggModal = document.getElementById("easter-egg-modal");
+const easterEggCloseBtn = document.querySelector(".easter-egg-close");
+const easterEggBackdrop = document.querySelector(".easter-egg-backdrop");
+const easterEggIframe = document.getElementById("easter-egg-iframe");
+
+const EASTER_EGG_VIDEO_URL = "https://www.youtube.com/embed/IRwUkRDr1s0";
+
+function openEasterEgg() {
+  if (!easterEggModal || !easterEggIframe) return;
+  easterEggIframe.src = EASTER_EGG_VIDEO_URL;
+  easterEggModal.classList.remove("hidden");
+}
+
+function closeEasterEgg() {
+  if (!easterEggModal) return;
+  easterEggModal.classList.add("hidden");
+  if (easterEggIframe) {
+    easterEggIframe.src = "";
+  }
+}
+
+if (logoEasterEggBtn) {
+  logoEasterEggBtn.addEventListener("click", openEasterEgg);
+}
+
+if (easterEggCloseBtn) {
+  easterEggCloseBtn.addEventListener("click", closeEasterEgg);
+}
+
+if (easterEggBackdrop) {
+  easterEggBackdrop.addEventListener("click", closeEasterEgg);
+}
+
 const DIFFICULTY_LEVELS = ["easy", "medium", "hard"];
 const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" };
 
