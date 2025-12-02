@@ -735,6 +735,8 @@ if (toggleFleetBtn) {
 const soundBtn = document.getElementById("sound-btn");
 if (soundBtn) {
   soundBtn.addEventListener("click", toggleSound);
+}
+
 if (difficultyEl) {
   difficultyEl.addEventListener("change", () => {
     difficulty = difficultyEl.value;
