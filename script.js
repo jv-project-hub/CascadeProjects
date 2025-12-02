@@ -535,6 +535,42 @@ function aiFire() {
         break;
       }
     }
+  } else if (difficulty === "medium") {
+    const shouldHunt = aiHuntMode && aiHuntTargets.length > 0 && Math.random() < 0.5;
+    
+    if (shouldHunt) {
+      while (aiHuntTargets.length > 0 && !usedHuntTarget) {
+        const target = aiHuntTargets.shift();
+        r = target.r;
+        c = target.c;
+        tile = playerBoard[r][c];
+        if (!tile.hit) {
+          usedHuntTarget = true;
+          removeFromAvailableShots(r, c);
+        }
+      }
+      if (!usedHuntTarget) {
+        aiHuntMode = false;
+      }
+    }
+
+    if (!usedHuntTarget) {
+      while (true) {
+        if (aiAvailableShots.length === 0) {
+          gameOver = true;
+          statusEl.textContent = "Draw! No more positions to fire.";
+          startBtn.textContent = "Restart";
+          return;
+        }
+        const shot = aiAvailableShots.pop();
+        r = shot.r;
+        c = shot.c;
+        tile = playerBoard[r][c];
+        if (!tile.hit) {
+          break;
+        }
+      }
+    }
   } else if (difficulty === "hard") {
     if (aiHuntMode && aiHuntTargets.length > 0) {
       while (aiHuntTargets.length > 0 && !usedHuntTarget) {
@@ -607,7 +643,7 @@ function aiFire() {
         sunkThisShot = true;
       }
 
-      if (difficulty === "hard") {
+      if (difficulty === "medium" || difficulty === "hard") {
         aiHuntMode = true;
         aiLastHit = { r, c };
         const adjacent = getAdjacentCells(r, c);
