@@ -88,10 +88,10 @@ h1 {
 
 .stats {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 4px;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .fleets {
