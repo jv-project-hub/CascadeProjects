@@ -153,11 +153,14 @@ function clearPlacementPreview() {
 function updateFleetVisibility() {
   if (!fleetsEl || !toggleFleetBtn) return;
   const fleetPanels = fleetsEl.querySelectorAll(".fleet-panel");
+  const statsEl = fleetsEl.querySelector(".stats");
   if (fleetsVisible) {
     fleetPanels.forEach((panel) => panel.classList.remove("hidden"));
+    if (statsEl) statsEl.classList.remove("hidden");
     toggleFleetBtn.textContent = "Fleet Info: ON";
   } else {
     fleetPanels.forEach((panel) => panel.classList.add("hidden"));
+    if (statsEl) statsEl.classList.add("hidden");
     toggleFleetBtn.textContent = "Fleet Info: OFF";
   }
 }

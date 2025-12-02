@@ -113,7 +113,8 @@ h1 {
   margin-bottom: 4px;
 }
 
-.fleet-panel.hidden {
+.fleet-panel.hidden,
+.stats.hidden {
   display: none;
 }
 
