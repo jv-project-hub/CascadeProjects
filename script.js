@@ -468,19 +468,26 @@ function onPlayerFire(e) {
 function aiFire() {
   if (gameOver) return;
 
-  if (aiAvailableShots.length === 0) {
-    gameOver = true;
-    statusEl.textContent = "Draw! No more positions to fire.";
-    startBtn.textContent = "Restart";
-    return;
-  }
+  // Use iterative approach instead of recursion to find a valid shot
+  // This avoids potential stack overflow if data model changes in the future
+  let r, c, tile;
+  while (true) {
+    if (aiAvailableShots.length === 0) {
+      gameOver = true;
+      statusEl.textContent = "Draw! No more positions to fire.";
+      startBtn.textContent = "Restart";
+      return;
+    }
 
-  const shot = aiAvailableShots.pop();
-  const { r, c } = shot;
-  const tile = playerBoard[r][c];
+    const shot = aiAvailableShots.pop();
+    r = shot.r;
+    c = shot.c;
+    tile = playerBoard[r][c];
 
-  if (tile.hit) {
-    return aiFire();
+    if (!tile.hit) {
+      break; // Found a valid shot, exit the loop
+    }
+    // Otherwise, continue to the next shot
   }
 
   tile.hit = true;
