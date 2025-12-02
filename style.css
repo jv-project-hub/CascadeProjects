@@ -254,7 +254,12 @@ h1 {
 }
 
 .cell.miss {
-  background: #95a5a6;
+  background-image:
+    url("images/splash.png"),
+    linear-gradient(#1a3a5c, #1a3a5c);
+  background-position: center, center;
+  background-size: 80% 80%, cover;
+  background-repeat: no-repeat, no-repeat;
 }
 
 .cell.preview {
@@ -270,4 +275,38 @@ h1 {
 .cell.disabled {
   cursor: default;
   opacity: 0.7;
+}
+
+.cell.hit.disabled,
+.cell.miss.disabled {
+  opacity: 1;
+}
+
+.legend {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.legend .cell.legend {
+  width: 18px;
+  height: 18px;
+}
+
+.legend .water {
+  background: #123456;
+}
+
+.legend .ship {
+  background: #2c3e50;
+}
+
+.legend .hit {
+  background: #e74c3c;
+}
+
+.legend .miss {
+  background: #95a5a6;
 }
