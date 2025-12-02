@@ -223,7 +223,7 @@ h1 {
 }
 
 .cell.miss {
-  background: #95a5a6;
+  background: transparent url("images/splash.png") center/cover no-repeat;
 }
 
 .cell.preview {
