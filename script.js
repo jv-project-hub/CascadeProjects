@@ -43,7 +43,38 @@ const statusEl = document.getElementById("status");
 const startBtn = document.getElementById("start-btn");
 const orientationBtn = document.getElementById("orientation-btn");
 const toggleFleetBtn = document.getElementById("toggle-fleet-btn");
-const difficultyEl = document.getElementById("difficulty");
+const difficultyBtn = document.getElementById("difficulty-btn");
+
+// Easter Egg elements
+const logoEasterEggBtn = document.querySelector(".logo-easter-egg");
+const easterEggModal = document.getElementById("easter-egg-modal");
+const easterEggCloseBtn = document.querySelector(".easter-egg-close");
+const easterEggBackdrop = document.querySelector(".easter-egg-backdrop");
+
+function openEasterEgg() {
+  if (!easterEggModal) return;
+  easterEggModal.classList.remove("hidden");
+}
+
+function closeEasterEgg() {
+  if (!easterEggModal) return;
+  easterEggModal.classList.add("hidden");
+}
+
+if (logoEasterEggBtn) {
+  logoEasterEggBtn.addEventListener("click", openEasterEgg);
+}
+
+if (easterEggCloseBtn) {
+  easterEggCloseBtn.addEventListener("click", closeEasterEgg);
+}
+
+if (easterEggBackdrop) {
+  easterEggBackdrop.addEventListener("click", closeEasterEgg);
+}
+
+const DIFFICULTY_LEVELS = ["easy", "medium", "hard"];
+const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" };
 
 const playerShipsLeftEl = document.getElementById("player-ships-left");
 const aiShipsLeftEl = document.getElementById("ai-ships-left");
@@ -149,12 +180,16 @@ function clearPlacementPreview() {
 
 function updateFleetVisibility() {
   if (!fleetsEl || !toggleFleetBtn) return;
+  const fleetPanels = fleetsEl.querySelectorAll(".fleet-panel");
+  const statsEl = fleetsEl.querySelector(".stats");
   if (fleetsVisible) {
-    fleetsEl.classList.remove("hidden");
-    toggleFleetBtn.textContent = "Hide Fleets";
+    fleetPanels.forEach((panel) => panel.classList.remove("hidden"));
+    if (statsEl) statsEl.classList.remove("hidden");
+    toggleFleetBtn.textContent = "Fleet Info: ON";
   } else {
-    fleetsEl.classList.add("hidden");
-    toggleFleetBtn.textContent = "Show Fleets";
+    fleetPanels.forEach((panel) => panel.classList.add("hidden"));
+    if (statsEl) statsEl.classList.add("hidden");
+    toggleFleetBtn.textContent = "Fleet Info: OFF";
   }
 }
 
@@ -295,12 +330,12 @@ function startGame() {
     return;
   }
 
-  const aiCells = aiBoardEl.querySelectorAll(".cell");
-  aiCells.forEach((cell) => cell.classList.remove("disabled"));
+    const aiCells = aiBoardEl.querySelectorAll(".cell");
+    aiCells.forEach((cell) => cell.classList.remove("disabled"));
 
-  if (difficultyEl) {
-    difficultyEl.disabled = true;
-  }
+    if (difficultyBtn) {
+      difficultyBtn.disabled = true;
+    }
 
   gameOver = false;
   playerTurn = true;
@@ -323,14 +358,14 @@ function initGame() {
   playerShips = [];
   aiShips = [];
 
-  orientationBtn.textContent = "Orientation: Horizontal";
+  orientationBtn.textContent = "Ship Orientation: Horizontal";
   orientationBtn.disabled = false;
   startBtn.textContent = "Start Game";
 
-  if (difficultyEl) {
-    difficulty = difficultyEl.value;
-    difficultyEl.disabled = false;
-  }
+    if (difficultyBtn) {
+      difficultyBtn.disabled = false;
+      difficultyBtn.textContent = "Difficulty: " + DIFFICULTY_LABELS[difficulty];
+    }
 
   playerBoard = createEmptyBoard();
   aiBoard = createEmptyBoard();
@@ -724,9 +759,9 @@ function checkAllShipsSunk(shipsArray) {
 
 orientationBtn.addEventListener("click", () => {
   horizontal = !horizontal;
-  orientationBtn.textContent = horizontal
-    ? "Orientation: Horizontal"
-    : "Orientation: Vertical";
+    orientationBtn.textContent = horizontal
+      ? "Ship Orientation: Horizontal"
+      : "Ship Orientation: Vertical";
 });
 
 startBtn.addEventListener("click", startGame);
@@ -743,9 +778,12 @@ if (soundBtn) {
   soundBtn.addEventListener("click", toggleSound);
 }
 
-if (difficultyEl) {
-  difficultyEl.addEventListener("change", () => {
-    difficulty = difficultyEl.value;
+if (difficultyBtn) {
+  difficultyBtn.addEventListener("click", () => {
+    const currentIndex = DIFFICULTY_LEVELS.indexOf(difficulty);
+    const nextIndex = (currentIndex + 1) % DIFFICULTY_LEVELS.length;
+    difficulty = DIFFICULTY_LEVELS[nextIndex];
+    difficultyBtn.textContent = "Difficulty: " + DIFFICULTY_LABELS[difficulty];
   });
 }
 
