@@ -61,6 +61,25 @@ function closeEasterEgg() {
   easterEggModal.classList.add("hidden");
 }
 
+// Game Result Modal elements
+const resultModal = document.getElementById("result-modal");
+const resultGif = document.getElementById("result-gif");
+
+function openResultModal(didWin) {
+  if (!resultModal || !resultGif) return;
+  if (didWin) {
+    resultGif.src = "images/Winner.gif";
+  } else {
+    resultGif.src = "images/Loser.gif";
+  }
+  resultModal.classList.remove("hidden");
+}
+
+function closeResultModal() {
+  if (!resultModal) return;
+  resultModal.classList.add("hidden");
+}
+
 if (logoEasterEggBtn) {
   logoEasterEggBtn.addEventListener("click", openEasterEgg);
 }
@@ -96,6 +115,9 @@ let playerShots = 0;
 let aiShots = 0;
 
 let fleetsVisible = true;
+
+// Track if game has started (after placement, before game over)
+let gameStarted = false;
 
 // difficulty setting
 let difficulty = "medium";
@@ -325,20 +347,31 @@ function startGame() {
     alert("Finish placing all your ships before starting.");
     return;
   }
+
+  // Mid-game restart: game has started but not yet over
+  if (gameStarted && !gameOver) {
+    initGame();
+    return;
+  }
+
+  // Post-game restart: game is over
   if (gameOver) {
     initGame();
     return;
   }
 
-    const aiCells = aiBoardEl.querySelectorAll(".cell");
-    aiCells.forEach((cell) => cell.classList.remove("disabled"));
+  // Start fresh game
+  const aiCells = aiBoardEl.querySelectorAll(".cell");
+  aiCells.forEach((cell) => cell.classList.remove("disabled"));
 
-    if (difficultyBtn) {
-      difficultyBtn.disabled = true;
-    }
+  if (difficultyBtn) {
+    difficultyBtn.disabled = true;
+  }
 
   gameOver = false;
   playerTurn = true;
+  gameStarted = true;
+  startBtn.textContent = "Restart";
   statusEl.textContent = "Your turn: fire on Enemy Waters.";
 }
 
@@ -348,6 +381,10 @@ function initGame() {
   placingIndex = 0;
   horizontal = true;
   placementDone = false;
+  gameStarted = false;
+
+  // Close any open result modal
+  closeResultModal();
 
   // Remove any existing player ship images from previous games
   if (playerBoardWrapper) {
@@ -544,8 +581,10 @@ function onPlayerFire(e) {
 
   if (checkAllShipsSunk(aiShips)) {
     gameOver = true;
+    gameStarted = false;
     statusEl.textContent = "You win! All enemy ships have been sunk.";
     startBtn.textContent = "Restart";
+    openResultModal(true);
     return;
   }
 
@@ -593,6 +632,7 @@ function aiFire() {
     while (true) {
       if (aiAvailableShots.length === 0) {
         gameOver = true;
+        gameStarted = false;
         statusEl.textContent = "Draw! No more positions to fire.";
         startBtn.textContent = "Restart";
         return;
@@ -628,6 +668,7 @@ function aiFire() {
       while (true) {
         if (aiAvailableShots.length === 0) {
           gameOver = true;
+          gameStarted = false;
           statusEl.textContent = "Draw! No more positions to fire.";
           startBtn.textContent = "Restart";
           return;
@@ -662,6 +703,7 @@ function aiFire() {
       while (true) {
         if (aiAvailableShots.length === 0) {
           gameOver = true;
+          gameStarted = false;
           statusEl.textContent = "Draw! No more positions to fire.";
           startBtn.textContent = "Restart";
           return;
@@ -679,6 +721,7 @@ function aiFire() {
     while (true) {
       if (aiAvailableShots.length === 0) {
         gameOver = true;
+        gameStarted = false;
         statusEl.textContent = "Draw! No more positions to fire.";
         startBtn.textContent = "Restart";
         return;
@@ -742,8 +785,10 @@ function aiFire() {
 
   if (checkAllShipsSunk(playerShips)) {
     gameOver = true;
+    gameStarted = false;
     statusEl.textContent = "You lose! All your ships have been sunk.";
     startBtn.textContent = "Restart";
+    openResultModal(false);
     return;
   }
 

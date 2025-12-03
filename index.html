@@ -15,7 +15,6 @@
     </h1>
 
     <div class="controls">
-      <button id="start-btn">Start Game</button>
       <div class="game-options">
         <span class="game-options-label">Game Options</span>
                 <button id="orientation-btn" class="game-option-btn">Ship Orientation: Horizontal</button>
@@ -23,6 +22,10 @@
         <button id="sound-btn" class="game-option-btn">Sound: ON</button>
         <button id="difficulty-btn" class="game-option-btn">Difficulty: Medium</button>
       </div>
+    </div>
+
+    <div class="start-button-row">
+      <button id="start-btn">Start Game</button>
     </div>
 
     <div class="fleets">
@@ -117,13 +120,6 @@
       </div>
     </div>
 
-    <div class="legend">
-      <span class="cell legend water"></span> Water
-      <span class="cell legend ship"></span> Your Ship
-      <span class="cell legend hit"></span> Hit
-      <span class="cell legend miss"></span> Miss
-    </div>
-
     <div class="status-container">
       <span id="status">Place your ships by clicking on your board.</span>
     </div>
@@ -135,6 +131,15 @@
     <div class="easter-egg-content">
       <button type="button" class="easter-egg-close" aria-label="Close">&times;</button>
       <img src="images/easter-egg.gif" alt="Easter Egg" class="easter-egg-gif">
+    </div>
+  </div>
+
+  <!-- Game Result Modal -->
+  <div id="result-modal" class="easter-egg-modal hidden">
+    <div class="easter-egg-backdrop" onclick="closeResultModal()"></div>
+    <div class="easter-egg-content result-content">
+      <button type="button" class="easter-egg-close" aria-label="Close" onclick="closeResultModal()">&times;</button>
+      <img id="result-gif" class="easter-egg-gif" alt="Game Result">
     </div>
   </div>
 
