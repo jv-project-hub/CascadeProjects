@@ -61,6 +61,28 @@ function closeEasterEgg() {
   easterEggModal.classList.add("hidden");
 }
 
+// Game Result Modal elements
+const resultModal = document.getElementById("result-modal");
+const resultGif = document.getElementById("result-gif");
+const resultTitle = document.getElementById("result-title");
+
+function openResultModal(didWin) {
+  if (!resultModal || !resultGif || !resultTitle) return;
+  if (didWin) {
+    resultTitle.textContent = "You Win!";
+    resultGif.src = "images/Winner.gif";
+  } else {
+    resultTitle.textContent = "You Lose!";
+    resultGif.src = "images/Loser.gif";
+  }
+  resultModal.classList.remove("hidden");
+}
+
+function closeResultModal() {
+  if (!resultModal) return;
+  resultModal.classList.add("hidden");
+}
+
 if (logoEasterEggBtn) {
   logoEasterEggBtn.addEventListener("click", openEasterEgg);
 }
@@ -364,6 +386,9 @@ function initGame() {
   placementDone = false;
   gameStarted = false;
 
+  // Close any open result modal
+  closeResultModal();
+
   // Remove any existing player ship images from previous games
   if (playerBoardWrapper) {
     const oldImages = playerBoardWrapper.querySelectorAll(".ship-image");
@@ -562,6 +587,7 @@ function onPlayerFire(e) {
     gameStarted = false;
     statusEl.textContent = "You win! All enemy ships have been sunk.";
     startBtn.textContent = "Restart";
+    openResultModal(true);
     return;
   }
 
@@ -765,6 +791,7 @@ function aiFire() {
     gameStarted = false;
     statusEl.textContent = "You lose! All your ships have been sunk.";
     startBtn.textContent = "Restart";
+    openResultModal(false);
     return;
   }
 
